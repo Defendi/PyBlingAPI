@@ -32,6 +32,8 @@ setup(
     long_description=open('README.md', 'r').read(),
     install_requires=[
         'requests==2.23.0',
+        'Jinja2 >= 2.8',
+        'lxml >= 3.5.0, < 5',
     ],
     tests_require=[
         'pytest',

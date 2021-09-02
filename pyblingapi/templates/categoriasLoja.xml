@@ -1,5 +1,5 @@
 <categoriasLoja>
-	{% for categoria in categorias.categoria %}
+	{% for categoria in categorias %}
 	<categoriaLoja>
 		<idCategoria>{{ categoria.idCategoria }}</idCategoria>
 		<descricaoVinculo>{{ categoria.descricaoVinculo }}</descricaoVinculo>

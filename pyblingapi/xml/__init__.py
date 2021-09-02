@@ -1,0 +1,84 @@
+# © 2021 Alexandre Defendi, Nexuz System
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+#    _   __                         _____            __               
+#   / | / /__  _  ____  ______     / ___/__  _______/ /____  ____ ___ 
+#  /  |/ / _ \| |/_/ / / /_  /     \__ \/ / / / ___/ __/ _ \/ __ `__ \
+# / /|  /  __/>  </ /_/ / / /_    ___/ / /_/ (__  ) /_/  __/ / / / / /
+#/_/ |_/\___/_/|_|\__,_/ /___/   /____/\__, /____/\__/\___/_/ /_/ /_/ 
+#                                     /____/                          
+
+import logging
+
+from lxml import etree
+
+from lxml import objectify
+from jinja2 import Environment, FileSystemLoader
+from . import filters
+
+_logger = logging.getLogger(__name__)
+
+def recursively_empty(e):
+    if e.text:
+        return False
+    return all((recursively_empty(c) for c in e.iterchildren()))
+
+
+def render_xml(path, template_name, remove_empty, **vals):
+    vals = recursively_normalize(vals)
+    env = Environment(loader=FileSystemLoader(path), extensions=['jinja2.ext.with_'])
+    env.filters["normalize"] = filters.strip_line_feed
+    env.filters["normalize_str"] = filters.normalize_str
+    env.filters["format_percent"] = filters.format_percent
+    env.filters["format_datetime"] = filters.format_datetime
+    env.filters["format_date"] = filters.format_date
+    env.filters["comma"] = filters.format_with_comma
+
+    template = env.get_template(template_name)
+    xml = template.render(**vals).replace('\n', '')
+    xml = xml.replace('&', '&amp;')
+    _logger.info(xml)
+    parser = etree.XMLParser(remove_blank_text=True, remove_comments=True, strip_cdata=False)
+    root = etree.fromstring(xml, parser=parser)
+    for element in root.iter("*"):  # remove espaços em branco
+        if element.text is not None and not element.text.strip():
+            element.text = None
+    if remove_empty:
+        context = etree.iterwalk(root)
+        for dummy, elem in context:
+            parent = elem.getparent()
+            if recursively_empty(elem):
+                parent.remove(elem)
+    return root
+
+
+def sanitize_response(response):
+    try:
+        parser = etree.XMLParser(encoding='utf-8')
+        tree = etree.fromstring(response.encode('UTF-8'), parser=parser)
+        # Remove namespaces inuteis na resposta
+        for elem in tree.getiterator():
+            if not hasattr(elem.tag, 'find'):
+                continue
+            i = elem.tag.find('}')
+            if i >= 0:
+                elem.tag = elem.tag[i + 1:]
+        objectify.deannotate(tree, cleanup_namespaces=True)
+        return response, objectify.fromstring(etree.tostring(tree))
+    except:
+        return response, None
+
+
+def recursively_normalize(vals):
+    if type(vals) is str:
+        vals = filters.normalize_str(vals)
+    else:
+        for item in vals:
+            if type(vals[item]) is str:
+                vals[item] = vals[item].strip()
+                vals[item] = filters.normalize_str(vals[item])
+            elif type(vals[item]) is dict:
+                recursively_normalize(vals[item])
+            elif type(vals[item]) is list:
+                for a in vals[item]:
+                    recursively_normalize(a)
+    return vals
