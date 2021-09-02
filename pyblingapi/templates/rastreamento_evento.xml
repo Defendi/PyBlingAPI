@@ -1,0 +1,9 @@
+<evento>
+	<id_servico>{{ evento.id_servico }}</id_servico>
+	<data_evento>{{ evento.data_evento }}</data_evento>
+	<origem>{{ evento.origem }}</origem>
+	<destino>{{ evento.destino }}</destino>
+	<descricao>{{ evento.descricao }}</descricao>
+	<codigo_situacao>{{ evento.codigo_situacao }}</codigo_situacao>
+	<url>{{ evento.url }}</url>
+</evento>

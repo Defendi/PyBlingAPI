@@ -1,0 +1,9 @@
+<categoriasLoja>
+	{% for categoria in categorias.categoria %}
+	<categoriaLoja>
+		<idCategoria>{{ categoria.idCategoria }}</idCategoria>
+		<descricaoVinculo>{{ categoria.descricaoVinculo }}</descricaoVinculo>
+		<idVinculoLoja>{{ categoria.idVinculoLoja }}</idVinculoLoja>
+	</categoriaLoja>
+	{% endfor %}
+</categoriasLoja>

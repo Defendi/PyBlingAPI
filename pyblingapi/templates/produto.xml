@@ -1,0 +1,103 @@
+<produto>
+	<codigo>{{ produto.codigo }}</codigo>
+	<codigoItem>{{ produto.codigoItem }}</codigoItem>
+	<descricao>{{ produto.descricao }}</descricao>
+	<tipo>{{ produto.tipo }}</tipo>
+	<situacao>{{ produto.situacao }}</situacao>
+	<descricaoCurta>{{ produto.descricaoCurta }}</descricaoCurta>
+	<descricaoComplementar>{{ produto.descricaoComplementar }}</descricaoComplementar>
+	<un>{{ produto.un }}</un>
+	<vlr_unit>{{ produto.vlr_unit }}</vlr_unit>
+	<preco_custo>{{ produto.preco_custo }}</preco_custo>
+	<peso_bruto>{{ produto.peso_bruto }}</peso_bruto>
+	<peso_liq>{{ produto.peso_liq }}</peso_liq>
+	<class_fiscal>{{ produto.class_fiscal }}</class_fiscal>
+	<marca>{{ produto.marca }}</marca>
+	<cest>{{ produto.cest }}</cest>
+	<origem>{{ produto.origem }}</origem>
+	<idGrupoProduto>{{ produto.idGrupoProduto }}</idGrupoProduto>
+	<condicao>{{ produto.condicao }}</condicao>
+	<freteGratis>{{ produto.freteGratis }}</freteGratis>
+	<linkExterno>{{ produto.linkExterno }}</linkExterno>
+	<observacoes>{{ produto.observacoes }}</observacoes>
+	<producao>{{ produto.producao }}</producao>
+	<unidadeMedida>{{ produto.unidadeMedida }}</unidadeMedida>
+	<dataValidade>{{ produto.dataValidade }}</dataValidade>
+	<descricaoFornecedor>{{ produto.descricaoFornecedor }}</descricaoFornecedor>
+	<idFabricante>{{ produto.idFabricante }}</idFabricante>
+	<codigoFabricante>{{ produto.codigoFabricante }}</codigoFabricante>
+	{% if produto.deposito is defined %}
+	{% with deposito = produto.deposito %}
+	<deposito>
+		<id>{{ deposito.id }}</id>
+		<estoque>{{ deposito.estoque }}</estoque>
+	</deposito>
+	{% endwith %}
+	{% endif %}
+	<gtin>{{ produto.gtin }}</gtin>
+	<gtinEmbalagem>{{ produto.gtinEmbalagem }}</gtinEmbalagem>
+	<largura>{{ produto.largura }}</largura>
+	<altura>{{ produto.altura }}</altura>
+	<profundidade>{{ produto.profundidade }}</profundidade>
+	<estoqueMinimo>{{ produto.estoqueMinimo }}</estoqueMinimo>
+	<estoqueMaximo>{{ produto.estoqueMaximo }}</estoqueMaximo>
+	<itensPorCaixa>{{ produto.itensPorCaixa }}</itensPorCaixa>
+	<volumes>{{ produto.volumes }}</volumes>
+	<urlVideo>{{ produto.urlVideo }}</urlVideo>
+	<localizacao>{{ produto.localizacao }}</localizacao>
+	<crossdocking>{{ produto.crossdocking }}</crossdocking>
+	<garantia>{{ produto.garantia }}</garantia>
+	<spedTipoItem>{{ produto.spedTipoItem }}</spedTipoItem>
+	{% if produto.variacoes is defined %}
+	<variacoes>
+		{% for variacao in produto.variacoes %}
+		<variacao>
+			<nome>{{ variacao.nome }}</nome>
+			<codigo>{{ variacao.codigo }}</codigo>
+			<vlr_unit>{{ variacao.vlr_unit }}</vlr_unit>
+			<clonarDadosPai>{{ variacao.clonarDadosPai }}</clonarDadosPai>
+			<estoque>{{ variacao.estoque }}</estoque>
+			<un>{{ variacao.un }}</un>
+			{% if variacao.deposito is defined %}
+			{% with deposito = variacao.deposito %}
+			<deposito>
+				<id>{{ deposito.id }}</id>
+				<estoque>{{ deposito.estoque }}</estoque>
+			</deposito>
+			{% endwith %}
+			{% endif %}
+		</variacao>
+		{% endfor %}
+	</variacoes>
+	{% endif %}
+	{% if produto.imagens is defined %}
+	{% for imagem in produto.imagens %}
+	<imagens>
+		<url>{{ imagem.url }}</url>
+	</imagens>
+	{% endfor %}
+	{% endif %}
+	{% if produto.camposCustomizados is defined %}
+	{% for camposCustomizado in produto.camposCustomizados %}
+	<camposCustomizados>
+		<alias>{{ camposCustomizado.alias }}</alias>
+	</camposCustomizados>
+	{% endfor %}
+	{% endif %}
+	<idCategoria>{{ produto.idCategoria }}</idCategoria>
+	{% if produto.estrutura is defined %}
+	{% with estrutura = produto.estrutura %}
+	<estrutura>
+		<tipoEstoque>{{ estrutura.tipoEstoque }}</tipoEstoque>
+		<lancarEstoque>{{ estrutura.lancarEstoque }}</lancarEstoque>
+		{% with componente = estrutura.componente %}
+		<componente>
+			<nome>{{ componente.nome }}</nome>
+			<codigo>{{ componente.codigo }}</codigo>
+			<quantidade>{{ componente.quantidade }}</quantidade>
+		</componente>
+		{% endwith %}
+	</estrutura>
+	{% endwith %}
+	{% endif %}
+</produto>

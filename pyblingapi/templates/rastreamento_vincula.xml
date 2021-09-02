@@ -1,0 +1,8 @@
+<rastreamentos>
+	{% for rastreamento in rastreamentos.rastreamento %}
+	<rastreamento>
+		<id_servico>{{ rastreamento.id_servico }}</id_servico>
+		<codigo>{{ rastreamento.codigo }}</codigo>
+	</rastreamento>
+	{% endfor %}
+</rastreamentos>

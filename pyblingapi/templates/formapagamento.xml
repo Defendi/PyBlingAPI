@@ -1,0 +1,22 @@
+<formapagamento>
+	<descricao>{{ formapagamento.descricao }}</descricao>
+	<codigofiscal>{{ formapagamento.codigofiscal }}</codigofiscal>
+	<condicao>{{ formapagamento.condicao }}</condicao>
+	<destino>{{ formapagamento.destino }}</destino>
+	<padrao>{{ formapagamento.padrao }}</padrao>
+	<situacao>{{ formapagamento.situacao }}</situacao>
+	<dadoscartao>{{ formapagamento.dadoscartao }}</dadoscartao>
+	<bandeira>{{ formapagamento.bandeira }}</bandeira>
+	<tipointegracao>{{ formapagamento.tipointegracao }}</tipointegracao>
+	<cnpjcredenciadora>{{ formapagamento.cnpjcredenciadora }}</cnpjcredenciadora>
+	<autoliquidacao>{{ formapagamento.autoliquidacao }}</autoliquidacao>
+	{% if formapagamento.dadostaxas is defined -%}
+	{% with dadostaxas = formapagamento.dadostaxas %}
+	<dadostaxas>
+		<valoraliquota>{{ dadostaxas.valoraliquota }}</valoraliquota>
+		<valorfixo>{{ dadostaxas.valorfixo }}</valorfixo>
+		<prazo>{{ dadostaxas.prazo }}</prazo>
+	</dadostaxas>
+	{% endwith %}
+	{% endif %}
+</formapagamento>

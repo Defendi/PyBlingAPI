@@ -1,0 +1,33 @@
+<contato>
+	<nome>{{ contato.nome }}</nome>
+	<fantasia>{{ contato.nome }}</fantasia>
+	<tipoPessoa>{{ contato.nome }}</tipoPessoa>
+	<contribuinte>{{ contato.nome }}</contribuinte>
+	<cpf_cnpj>{{ contato.nome }}</cpf_cnpj>
+	<ie_rg>{{ contato.nome }}</ie_rg>
+	<endereco>{{ contato.nome }}</endereco> 
+	<numero>{{ contato.nome }}</numero>
+	<complemento>{{ contato.nome }}</complemento> 
+	<bairro>{{ contato.nome }}</bairro>
+	<cep>{{ contato.nome }}</cep> 
+	<cidade>{{ contato.nome }}</cidade> 
+	<uf>{{ contato.nome }}</uf>
+	<fone>{{ contato.nome }}</fone> 
+	<celular>{{ contato.nome }}</celular> 
+	<email>{{ contato.nome }}</email>
+	<emailNfe>{{ contato.nome }}</emailNfe>
+	<informacaoContato>{{ contato.nome }}</informacaoContato> 
+	<limiteCredito>{{ contato.nome }}</limiteCredito> 
+	<paisOrigem>{{ contato.nome }}</paisOrigem>
+	<codigo>{{ contato.nome }}</codigo>
+	<site>{{ contato.nome }}</site>
+	{% if contato.tipos_contatos is defined -%}
+	<tipos_contatos>
+		{% for tipo_contato in contato.tipos_contatos %}	 	 	 	 	 
+		<tipo_contato>	 	
+			<descricao>{{ tipo_contato.descricao }}</descricao>
+		</tipo_contato>
+		{% endfor %}
+	</tipos_contatos>
+	{% endif %}
+</contato>

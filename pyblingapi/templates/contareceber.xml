@@ -1,0 +1,37 @@
+<contareceber>
+	<dataEmissão>{{ contareceber.dataEmissao }}</dataEmissão>
+	<vencimentoOriginal>{{ contareceber.vencimentoOriginal }}</vencimentoOriginal>
+	<competencia>{{ contareceber.competencia }}</competencia>
+	<nroDocumento>{{ contareceber.nroDocumento }}</nroDocumento>
+	<valor>{{ contareceber.valor }}</valor>
+	<histórico>{{ contareceber.historico }}</histórico>
+	<categoria>{{ contareceber.categoria }}</categoria>
+	<portador>{{ contareceber.portador }}</portador>
+	{% with ocorrencia = contareceber.ocorrencia %}
+	<ocorrencia>
+		<ocorrenciaTipo>{{ ocorrencia.ocorrenciaTipo }}</ocorrenciaTipo>
+		<diaVencimento>{{ ocorrencia.diaVencimento }}</diaVencimento>
+		<nroParcelas>{{ ocorrencia.nroParcelas }}</nroParcelas>
+		<diaSemanaVencimento>{{ ocorrencia.diaSemanaVencimento }}</diaSemanaVencimento>
+	</ocorrencia>
+	{% endwith %}
+	{% with cliente = contareceber.cliente %}
+	<cliente>
+		<nome>{{ cliente.nome }}</nome>
+		<id>{{ cliente.id }}</id>
+		<cpf_cnpj>{{ cliente.cpf_cnpj }}</cpf_cnpj>
+		<tipoPessoa>{{ cliente.tipoPessoa }}</tipoPessoa>
+		<ie_rg>{{ cliente.ie_rg }}</ie_rg>
+		<endereco>{{ cliente.endereco }}</endereco>
+		<numero>{{ cliente.numero }}</numero>
+		<complemento>{{ cliente.complemento }}</complemento>
+		<cidade>{{ cliente.cidade }}</cidade>
+		<bairro>{{ cliente.bairro }}</bairro>
+		<cep>{{ cliente.cep }}</cep>
+		<uf>{{ cliente.uf }}</uf>
+		<email>{{ cliente.email }}</email>
+		<fone>{{ cliente.fone }}</fone>
+		<celular>{{ cliente.celular }}</celular>
+	</cliente>
+	{% endwith %}
+</contareceber>

@@ -1,0 +1,137 @@
+<pedido>
+	<tipo>{{ pedido.tipo }}</tipo>
+	<finalidade>{{ pedido.finalidade }}</finalidade>
+	<loja>{{ pedido.loja }}</loja>
+	<numero_loja>{{ pedido.numero_loja }}</numero_loja>
+	<numero_nf>{{ pedido.numero_nf }}</numero_nf>
+	<nat_operacao>{{ pedido.nat_operacao }}</nat_operacao>
+	<data_operacao>{{ pedido.data_operacao }}</data_operacao>
+	{% if pedido.referenciado is defined %}
+	{% with referenciado = pedido.referenciado %}
+	<doc_referenciado>
+		<modelo>{{ doc_referenciado.modelo }}</modelo>
+		<data>{{ doc_referenciado.data }}</data>
+		<numero>{{ doc_referenciado.numero }}</numero>
+		<serie>{{ doc_referenciado.serie }}</serie>
+		<coo>{{ doc_referenciado.coo }}</coo>
+		<chave_acesso>{{ doc_referenciado.chave_acesso }}</chave_acesso>
+	</doc_referenciado>
+	{% endwith %}
+	{% endif %}
+	{% with cliente = pedido.cliente %}
+	<cliente>
+		<nome>{{ cliente.nome }}</nome>
+		<tipo_pessoa>{{ cliente.tipo_pessoa }}</tipo_pessoa>
+		<cpf_cnpj>{{ cliente.cpf_cnpj }}</cpf_cnpj>
+		<ie_rg>{{ cliente.ie_rg }}</ie_rg>
+		<contribuinte>{{ cliente.contribuinte }}</contribuinte>
+		<endereco>{{ cliente.endereco }}</endereco>
+		<numero>{{ cliente.numero }}</numero>
+		<complemento>{{ cliente.complemento }}</complemento>
+		<bairro>{{ cliente.bairro }}</bairro>
+		<cep>{{ cliente.cep }}</cep>
+		<cidade>{{ cliente.cidade }}</cidade>
+		<uf>{{ cliente.uf }}</uf>
+		<pais>{{ cliente.pais }}</pais>
+		<fone>{{ cliente.fone }}</fone>
+		<email>{{ cliente.email }}</email>
+	</cliente>
+	{% endwith %}
+	{% if pedido.transporte is defined %}
+	{% with transporte = pedido.transporte %}
+	<transporte>
+		<transportadora>{{ transporte.transportadora }}</transportadora>
+		<cpf_cnpj>{{ transporte.cpf_cnpj }}</cpf_cnpj>
+		<ie_rg>{{ transporte.ie_rg }}</ie_rg>
+		<endereco>{{ transporte.endereco }}</endereco>
+		<cidade>{{ transporte.cidade }}</cidade>
+		<uf>{{ transporte.uf }}</uf>
+		<placa>{{ transporte.placa }}</placa>
+		<uf_veiculo>{{ transporte.uf_veiculo }}</uf_veiculo>
+		<marca>{{ transporte.marca }}</marca>
+		<tipo_frete>{{ transporte.tipo_frete }}</tipo_frete>
+		<qtde_volumes>{{ transporte.qtde_volumes }}</qtde_volumes>
+		<especie>{{ transporte.especie }}</especie>
+		<numero>{{ transporte.numero }}</numero>
+		<peso_bruto>{{ transporte.peso_bruto }}</peso_bruto>
+		<peso_liquido>{{ transporte.peso_liquido }}</peso_liquido>
+		<servico_correios>{{ transporte.servico_correios }}</servico_correios>
+		{% if transporte.etiqueta is defined %}
+		{% with etiqueta = transporte.etiqueta %}
+		<dados_etiqueta>
+			<nome>{{ etiqueta.tipo }}</nome>
+			<endereco>{{ etiqueta.tipo }}</endereco>
+			<numero>{{ etiqueta.tipo }}</numero>
+			<complemento>{{ etiqueta.tipo }}</complemento>
+			<municipio>{{ etiqueta.tipo }}</municipio>
+			<uf>{{ etiqueta.tipo }}</uf>
+			<cep>{{ etiqueta.tipo }}</cep>
+			<bairro>{{ etiqueta.tipo }}</bairro>
+		</dados_etiqueta>
+		{% endwith %}
+		{% endif %}
+		{% if transporte.volumes is defined %}
+		<volumes>
+			{% for volume in transporte.volumes %}
+			<volume>
+				<servico>{{ volume.servico }}</servico>
+				<codigoRastreamento>{{ volume.codigoRastreamento }}</codigoRastreamento>
+			</volume>
+			{% endfor %}
+		</volumes>
+		{% endif %}
+	</transporte>
+	{% endwith %}
+	{% endif %}
+	{% for item in pedido.item %}
+	<item>
+		<codigo>{{ item.codigo }}</codigo>
+		<descricao>{{ item.descricao }}</descricao>
+		<un>{{ item.un }}</un>
+		<qtde>{{ item.qtde }}</qtde>
+		<vlr_unit>{{ item.vlr_unit }}</vlr_unit>
+		<tipo>{{ item.tipo }}</tipo>
+		<peso_bruto>{{ item.peso_bruto }}</peso_bruto>
+		<numero_pedido_compra>{{ item.numero_pedido_compra }}</numero_pedido_compra>
+		<peso_liq>{{ item.peso_liq }}</peso_liq>
+		<class_fiscal>{{ item.class_fiscal }}</class_fiscal>
+		<cest>{{ item.cest }}</cest>
+		<cod_servico>{{ item.cod_servico }}</cod_servico>
+		<origem>{{ item.origem }}</origem>
+		<informacoes_adicionais>{{ item.informacoes_adicionais }}</informacoes_adicionais>
+	</item>
+	{% endfor %}
+	{% if pedido.parcelas is defined %}
+	{% for parcela in pedido.parcelas %}
+	<parcela>
+		<dias>{{ parcela.dias }}</dias>
+		<data>{{ parcela.data }}</data>
+		<vlr>{{ parcela.vlr }}</vlr>
+		<obs>{{ parcela.obs }}</obs>
+		<forma>{{ parcela.forma }}</forma>
+	</parcela>
+	{% endfor %}
+	{% endif %}
+	{% if pedido.rural_referenciada is defined %}
+	{% with rural_referenciada = pedido.rural_referenciada %}
+	<nf_produtor_rural_referenciada>
+		<numero>{{ rural_referenciada.numero }}</numero>
+		<serie>{{ rural_referenciada.serie }}</serie>
+		<ano_mes_emissao>{{ pedido.ano_mes_emissao }}</ano_mes_emissao>
+	</nf_produtor_rural_referenciada>
+	{% endwith %}
+	{% endif %}
+	<vlr_frete>{{ pedido.vlr_frete }}</vlr_frete>
+	<vlr_seguro>{{ pedido.vlr_seguro }}</vlr_seguro>
+	<vlr_despesas>{{ pedido.vlr_despesas }}</vlr_despesas>
+	<vlr_desconto>{{ pedido.vlr_desconto }}</vlr_desconto>
+	<obs>{{ pedido.obs }}</obs>
+	{% if pedido.intermediador is defined %}
+	{% with intermediador = pedido.intermediador %}
+	<intermediador>
+		<cnpj>{{ intermediador.cnpj }}</cnpj>
+		<nomeUsuario>{{ intermediador.nomeUsuario }}</nomeUsuario>
+	</intermediador>
+	{% endwith %}
+	{% endif %}
+</pedido>

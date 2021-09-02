@@ -1,0 +1,23 @@
+<logistica>
+	<descricao>{{ logistica.descricao }}</descricao>
+	{% if logistica.servicos is defined %}
+	<servicos>
+		{% for servico in logistica.servicos %}
+		<servico>
+			<descricao>{{ servico.descricao }}</descricao>
+			<frete_item>{{ servico.frete_item }}</frete_item>
+			<est_entrega>{{ servico.est_entrega }}</est_entrega>
+			<codigo>{{ servico.codigo }}</codigo>
+			<id_transportadora>{{ servico.id_transportadora }}</id_transportadora>
+			{% if servico.aliases is defined -%}
+			<aliases>
+				{% for alias in servico.aliases %}
+				<alias>{{ alias.alias }}</alias>
+				{% endfor %}
+			</aliases>
+			{% endif %}
+		</servico>
+		{% endfor %}
+	</servicos>
+	{% endif %}
+</logistica>

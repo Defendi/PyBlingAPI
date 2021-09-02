@@ -1,0 +1,46 @@
+<pedido>
+	<data>{{ pedido.data }}</data>
+	<vendedor>{{ pedido.vendedor }}</vendedor>
+	<numero_rps>{{ pedido.numero_rps }}</numero_rps>
+	<reter_iss>{{ pedido.reter_iss }}</reter_iss>
+	<desconto>{{ pedido.desconto }}</desconto>
+	{% with cliente = pedido.cliente %}
+	<cliente>
+		<nome>{{ cliente.nome }}</nome>
+		<cnpj>{{ cliente.cnpj }}</cnpj>
+		<ie>{{ cliente.ie }}</ie>
+		<im>{{ cliente.im }}</im>
+		<endereco>{{ cliente.endereco }}</endereco>
+		<numero>{{ cliente.numero }}</numero>
+		<complemento>{{ cliente.complemento }}</complemento>
+		<bairro>{{ cliente.bairro }}</bairro>
+		<cep>{{ cliente.cep }}</cep>
+		<cidade>{{ cliente.cidade }}</cidade>
+		<uf>{{ cliente.uf }}</uf>
+		<fone>{{ cliente.fone }}</fone>
+		<email>{{ cliente.email }}</email>
+	</cliente>
+	{% endwith %}
+	<servicos>
+		{% for servico in pedido.servicos %}
+		<servico>
+			<descricao>{{ servico.descricao }}</descricao>
+			<valor>{{ servico.valor }}</valor>
+			<codigo>{{ servico.codigo }}</codigo>
+		</servico>
+		{% endfor %}
+	</servicos>
+	{% if pedido.parcelas is defined %}
+	{% for parcela in pedido.parcelas %}
+	<parcelas>
+		<parcela>
+			<dias>{{ parcela.dias }}</dias>
+			<data>{{ parcela.data }}</data>
+			<vlr>{{ parcela.vlr }}</vlr>
+			<obs>{{ parcela.obs }}</obs>
+			<forma>{{ parcela.forma }}</forma>
+		</parcela>
+	</parcelas>
+	{% endfor %}
+	{% endif %}
+</pedido>

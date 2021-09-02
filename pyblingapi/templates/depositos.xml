@@ -1,0 +1,10 @@
+<depositos>
+	{% for deposito in depositos.deposito %}
+	<deposito>
+		<descricao>{{ deposito.descricao }}</descricao>
+		<desconsiderarSaldo>{{ deposito.desconsiderarSaldo }}</desconsiderarSaldo>
+		<depositoPadrao>{{ deposito.depositoPadrao }}</depositoPadrao>
+		<situacao>{{ deposito.situacao }}</situacao>
+	</deposito>
+	{% endfor %}
+</depositos>

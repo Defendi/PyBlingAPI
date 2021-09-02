@@ -1,0 +1,8 @@
+<categorias>
+	{% for categoria in categorias.categoria %}
+	<categoria>
+		<descricao>{{ categoria.descricao }}</descricao>
+		<idCategoriaPai>{{ categoria.idCategoriaPai }}</idCategoriaPai>
+	</categoria>
+	{% endfor %}
+</categorias>

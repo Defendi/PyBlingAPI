@@ -1,0 +1,67 @@
+<contrato>
+	<dataCriacao>{{ contrato.anoTermino }}</dataCriacao>
+	<dataBase>{{ contrato.anoTermino }}</dataBase>
+	<contatoDiferenteCobranca>{{ contrato.anoTermino }}</contatoDiferenteCobranca>
+	<numeroContrato>{{ contrato.anoTermino }}</numeroContrato>
+	<descricao>{{ contrato.anoTermino }}</descricao>
+	<situacao>{{ contrato.anoTermino }}</situacao>
+	<valor>{{ contrato.anoTermino }}</valor>
+	<emiteNota>{{ contrato.anoTermino }}</emiteNota>
+	{% if contrato.opcoesNota is defined -%}
+	<opcoesNota>
+		<percentualISS>{{ opcoesNota.percentualISS }}</percentualISS>
+		<periodicidadeCobranca>{{ contrato.anoTermino }}</periodicidadeCobranca>
+		<descISSTotalNota>{{ opcoesNota.descISSTotalNota }}</descISSTotalNota>
+		<descIRTotalNota>{{ opcoesNota.descIRTotalNota }}</descIRTotalNota>
+		<codListaServico>{{ opcoesNota.codListaServico }}</codListaServico>
+		<idProdutoVinculado>{{ opcoesNota.idProdutoVinculado }}</idProdutoVinculado>
+		<mesNota>{{ opcoesNota.mesNota }}</mesNota>
+		<textoNota>{{ opcoesNota.textoNota }}</textoNota>
+		<naturezaOperacao>{{ opcoesNota.naturezaOperacao }}</naturezaOperacao>
+		<CFOP>{{ opcoesNota.CFOP }}</CFOP>
+	</opcoesNota>
+	{% endif %}
+	<idCategoria>{{ contrato.anoTermino }}</idCategoria>
+	<idPortador>{{ contrato.anoTermino }}</idPortador>
+	<desconto>{{ contrato.anoTermino }}</desconto>
+	<mesFimDesconto>{{ contrato.anoTermino }}</mesFimDesconto>
+	<anoFimDesconto>{{ contrato.anoFimDesconto }}</anoFimDesconto>
+	<mesTermino>{{ contrato.anoTermino }}</mesTermino>
+	<anoTermino>{{ contrato.anoTermino }}</anoTermino>
+	<nroParcelasVendedor>{{ contrato.anoTermino }}</nroParcelasVendedor>
+	<percentualVendedor>{{ contrato.anoTermino }}</percentualVendedor>
+	<emiteOS>{{ contrato.anoTermino }}</emiteOS>
+	<obs>{{ contrato.anoTermino }}</obs>
+	{% with cliente = contrato.cliente %}
+	<cliente>
+		<nome>{{ cliente.nome }}</nome>
+		<cpf_cnpj>{{ cliente.cpf_cnpj }}</cpf_cnpj>
+		<tipo>{{ cliente.tipo }}</tipo>
+		<ie_rg>{{ cliente.ie_rg }}</ie_rg>
+		<rg>{{ cliente.rg }}</rg>
+		<endereco>{{ cliente.endereco }}</endereco> 
+		<numero>{{ cliente.numero }}</numero>
+		<complemento>{{ cliente.complemento }}</complemento> 
+		<cidade>{{ cliente.cidade }}</cidade> 
+		<bairro>{{ cliente.bairro }}</bairro>
+		<cep>{{ cliente.cep }}</cep> 
+		<uf>{{ cliente.uf }}</uf>
+		<email>{{ cliente.email }}</email>
+		<fone>{{ cliente.fone }}</fone> 
+		<celular>{{ cliente.celular }}</celular> 
+	</cliente>
+	{% endwith %}
+	<diaVencimento>{{ contrato.anoTermino }}</diaVencimento>
+	<mesVencimento>{{ contrato.anoTermino }}</mesVencimento>
+	<idVendedor>{{ contrato.anoTermino }}</idVendedor>
+	{% if contrato.anexos is defined -%}
+	<anexos>
+	{% for anexo in contrato.anexos %}
+		<anexo>
+			<filename></filename>
+			<data></data>
+		</anexo>
+	{% endfor %}
+	</anexos>
+	{% endif %}
+</contrato>

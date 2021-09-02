@@ -1,0 +1,37 @@
+<contapagar>
+	<dataEmissão>{{ contapagar.dataEmissao }}</dataEmissão>
+	<vencimentoOriginal>{{ contapagar.vencimentoOriginal }}</vencimentoOriginal>
+	<competencia>{{ contapagar.competencia }}</competencia>
+	<nroDocumento>{{ contapagar.nroDocumento }}</nroDocumento>
+	<valor>{{ contapagar.valor }}</valor>
+	<histórico>{{ contapagar.historico }}</histórico>
+	<categoria>{{ contapagar.categoria }}</categoria>
+	<portador>{{ contapagar.portador }}</portador>
+	{% with ocorrencia = contapagar.ocorrencia %}
+	<ocorrencia>
+		<ocorrenciaTipo>{{ ocorrencia.ocorrenciaTipo }}</ocorrenciaTipo>
+		<diaVencimento>{{ ocorrencia.diaVencimento }}</diaVencimento>
+		<nroParcelas>{{ ocorrencia.nroParcelas }}</nroParcelas>
+		<diaSemanaVencimento>{{ ocorrencia.diaSemanaVencimento }}</diaSemanaVencimento>
+	</ocorrencia>
+	{% endwith %}
+	{% with fornecedor = contapagar.fornecedor %}
+	<fornecedor>
+		<nome>{{ fornecedor.nome }}</nome>
+		<id>{{ fornecedor.id }}</id>
+		<cpf_cnpj>{{ fornecedor.cpf_cnpj }}</cpf_cnpj>
+		<tipoPessoa>{{ fornecedor.tipoPessoa }}</tipoPessoa>
+		<ie_rg>{{ fornecedor.ie_rg }}</ie_rg>
+		<endereco>{{ fornecedor.endereco }}</endereco>
+		<numero>{{ fornecedor.numero }}</numero>
+		<complemento>{{ fornecedor.complemento }}</complemento>
+		<cidade>{{ fornecedor.cidade }}</cidade>
+		<bairro>{{ fornecedor.bairro }}</bairro>
+		<cep>{{ fornecedor.cep }}</cep>
+		<uf>{{ fornecedor.uf }}</uf>
+		<email>{{ fornecedor.email }}</email>
+		<fone>{{ fornecedor.fone }}</fone>
+		<celular>{{ fornecedor.celular }}</celular>
+	</fornecedor>
+	{% endwith %}
+</contapagar>

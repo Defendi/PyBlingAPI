@@ -1,0 +1,19 @@
+<ordemproducao>
+	{% if ordemproducao.itens is defined %}
+	<itens>
+		{% for item in ordemproducao.itens %}
+		<item>
+			<codigoProduto>{{ item.codigoProduto }}</codigoProduto>
+			<nomeProduto>{{ item.nomeProduto }}</nomeProduto>
+			<quantidade>{{ item.quantidade }}</quantidade>
+		</item>
+		{% endfor %}
+	</itens>
+	{% endif %}
+	<idDepositoOrigem>{{ ordemproducao.idDepositoOrigem }}</idDepositoOrigem>
+	<idDepositoDestino>{{ ordemproducao.idDepositoDestino }}</idDepositoDestino>
+	<numero>{{ ordemproducao.numero }}</numero>
+	<previsaoInicio>{{ ordemproducao.previsaoInicio }}</previsaoInicio>
+	<previsaoFinal>{{ ordemproducao.previsaoFinal }}</previsaoFinal>
+	<observacoes>{{ ordemproducao.observacoes }}</observacoes>
+</ordemproducao>
