@@ -1,5 +1,7 @@
 
-from pyblingapi import xml_categoria
+from pyblingapi import BlingApi
+
+Bling = BlingApi('api-key')
 
 categorias = {
     'categorias': [
@@ -17,6 +19,6 @@ categorias = {
     },
 ]}
  
-xml = xml_categoria(**categorias)
+xml = Bling._xml_categoria(**categorias)
 
 print(xml)   
