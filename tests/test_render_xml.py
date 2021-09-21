@@ -19,6 +19,6 @@ categorias = {
     },
 ]}
  
-xml = Bling._xml_categoria(**categorias)
+xml = Bling.render_xml_categoria(**categorias)
 
 print(xml)   

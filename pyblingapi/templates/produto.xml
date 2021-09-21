@@ -26,6 +26,7 @@
 	<descricaoFornecedor>{{ produto.descricaoFornecedor }}</descricaoFornecedor>
 	<idFabricante>{{ produto.idFabricante }}</idFabricante>
 	<codigoFabricante>{{ produto.codigoFabricante }}</codigoFabricante>
+	<estoque>{{ produto.estoque }}</estoque>
 	{% if produto.deposito is defined %}
 	{% with deposito = produto.deposito %}
 	<deposito>

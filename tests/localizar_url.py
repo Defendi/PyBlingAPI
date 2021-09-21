@@ -1,3 +1,3 @@
-from pyblingapi import method_url
+from pyblingapi.servidor import localizar_uri
 
-print(method_url('categoria'))
+print(localizar_uri('produto','POST'))
