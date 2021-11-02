@@ -10,6 +10,7 @@
 #*************************************************************************#
 
 from datetime import datetime
+from secretstorage import item
 
 INTDATATYPE = 'integer'
 FLOATDATATYPE = 'float'
@@ -19,6 +20,29 @@ DATEDATATYPE = 'date'
 SELECTDATEDATATYPE = 'selectdate'
 
 BLINGDATEFORMAT = '%d/%m/%Y'
+
+SEL_CONTRACT_STATE = [
+    ('A',           'Ativo'),
+    ('I',           'Inativo'),
+    ('B',           'Baixado'),
+    ('S',           'Isento'),
+    ('T',           'Em avaliação'),
+]
+
+SEL_BILLS_STATE = [
+    ('pago',        'Ativo'),
+    ('cancelada',   'Inativo'),
+    ('aberto',      'Baixado'),
+    ('parcial',     'Isento'),
+]
+
+def StateInList(state,list):
+    res = False
+    for item in list:
+        if state==item[0]:
+            res = True
+            break
+    return res
 
 def find_nth(haystack, needle, n):
     start = haystack.find(needle)

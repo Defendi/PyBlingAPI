@@ -15,9 +15,10 @@ import requests
 
 from lxml import etree
 from pyblingapi.xml import render_xml
-from pyblingapi.servidor import localizar_uri
-from pyblingapi.errors import BlingApiRequestError, BlingApiDateSelectError, BlingApiTypeContactError
-from pyblingapi.tools import checkData, SELECTDATEDATATYPE
+from pyblingapi.servidor import localizar_uri, METHOD_DELETE, METHOD_GET, METHOD_POST, METHOD_PUT
+from pyblingapi.errors import BlingApiRequestError, BlingApiDateSelectError, BlingApiTypeContactError, BlingApiMethodError,\
+                              BlingStateError
+from pyblingapi.tools import checkData, StateInList, SELECTDATEDATATYPE, SEL_CONTRACT_STATE, SEL_BILLS_STATE
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +45,7 @@ class BlingApi(object):
         :param categoy_id: Busca uma categoria a partir do seu identificador (Opcional).
         """
         if bool(categoy_id):
-            uri = self._get_uri('categorias').format(idCategoria=categoy_id)
+            uri = self._get_uri('categoria_id').format(idCategoria=categoy_id)
         else:
             uri = self._get_uri('categoria')
         resp = self._make_request('GET', uri)
@@ -63,6 +64,98 @@ class BlingApi(object):
         resp = self._make_request('GET', uri)
         return resp
 
+    def getBillsToPay(self, payment_id=None, issue_date=None, due_date=None, state=None, cnpj=None):
+        """
+        Função que Busca os todos os vínculos de categorias por loja.
+        :param contact_id: Identificador da loja (opcional);
+        :param id_type: Identificador da categoria (opcional);
+        :param creation_date: periodo de ['dd/mm/aaaa','dd/mm/aaaa'] (opcional)
+        :param modification_date: periodo de ['dd/mm/aaaa','dd/mm/aaaa'] (opcional)
+        :param person_type: in ['F','J','E'] (opcional)
+        Caso contact_id seja passado os outros valores serão ignorados.
+        """
+        filters = []
+        if bool(payment_id):
+            uri = self._get_uri('contapagar_id').format(idContaPagar=payment_id)
+        else:
+            uri = self._get_uri('contapagar')
+
+            if issue_date:
+                if checkData(SELECTDATEDATATYPE, issue_date):
+                    filters.append('dataInclusao[{} TO {}]'.format(issue_date[0], issue_date[1]))
+                else:
+                    raise BlingApiDateSelectError()
+            
+            if due_date:
+                if checkData(SELECTDATEDATATYPE, due_date):
+                    filters.append('dataAlteracao[{} TO {}]'.format(due_date[0], due_date[1]))
+                else:
+                    raise BlingApiDateSelectError()
+    
+            if state:
+                if StateInList(state,SEL_BILLS_STATE):
+                    filters.append('situacao[{}]'.format(state))
+                else:
+                    raise BlingStateError()
+
+            if cnpj:
+                #TODO: Verificar se o cnpj é válido
+                filters.append('situacao[{}]'.format(state))
+    
+        params = self._construct_params(filters)
+        
+        resp = self._make_request('GET', uri, params=params)
+        return resp
+
+    def getBillsToReceive(self, receive_id=None, issue_date=None, due_date=None, pay_date=None, state=None, cnpj=None):
+        """
+        Função que Busca os todos os vínculos de categorias por loja.
+        :param receive_id: Identificador da Conta a Receber (opcional);
+        :param id_type: Identificador da categoria (opcional);
+        :param creation_date: periodo de ['dd/mm/aaaa','dd/mm/aaaa'] (opcional)
+        :param modification_date: periodo de ['dd/mm/aaaa','dd/mm/aaaa'] (opcional)
+        :param person_type: in ['F','J','E'] (opcional)
+        Caso contact_id seja passado os outros valores serão ignorados.
+        """
+        filters = []
+        if bool(receive_id):
+            uri = self._get_uri('contareceber_id').format(idContaPagar=receive_id)
+        else:
+            uri = self._get_uri('contareceber')
+
+            if issue_date:
+                if checkData(SELECTDATEDATATYPE, issue_date):
+                    filters.append('dataInclusao[{} TO {}]'.format(issue_date[0], issue_date[1]))
+                else:
+                    raise BlingApiDateSelectError()
+            
+            if due_date:
+                if checkData(SELECTDATEDATATYPE, due_date):
+                    filters.append('dataAlteracao[{} TO {}]'.format(due_date[0], due_date[1]))
+                else:
+                    raise BlingApiDateSelectError()
+
+            if pay_date:
+                if checkData(SELECTDATEDATATYPE, pay_date):
+                    filters.append('dataPagamento[{} TO {}]'.format(pay_date[0], pay_date[1]))
+                else:
+                    raise BlingApiDateSelectError()
+    
+            if state:
+                if StateInList(state,SEL_BILLS_STATE):
+                    filters.append('situacao[{}]'.format(state))
+                else:
+                    raise BlingStateError()
+
+            if cnpj:
+                #TODO: Verificar se o cnpj é válido
+                filters.append('situacao[{}]'.format(state))
+    
+        params = self._construct_params(filters)
+        
+        resp = self._make_request('GET', uri, params=params)
+        return resp
+
     def getContact(self, contact_id=None, id_type=None, creation_date=None, modification_date=None, person_type=None):
         """
         Função que Busca os todos os vínculos de categorias por loja.
@@ -77,9 +170,9 @@ class BlingApi(object):
         if bool(contact_id):
             uri = self._get_uri('contato').format(idContato=contact_id)
 
-            if not bool(id_type) or id_type == 'cnpj':
+            if not bool(id_type) or id_type == 'cpf_cnpj':
                 filters.append('identificador[1]')
-            else:
+            elif id_type == 'id':
                 filters.append('identificador[2]')
         else:
             uri = self._get_uri('contatos')
@@ -105,27 +198,6 @@ class BlingApi(object):
         params = self._construct_params(filters)
         
         resp = self._make_request('GET', uri, params=params)
-        return resp
-
-    def postContact(self, contact_id=None, **kwargs):
-        """
-        Função que Insere um contato ou altera um contato.
-        :param contact_id: Identificador do contato (opcional).
-        :param kwargs: Dict com informações para gerar o xml (obrigatório).
-        Caso contact_id seja passado será realizado uma alteração, caso seja None o contato será criado.
-        """
-        if bool(contact_id):
-            uri = self._get_uri('contato').format(idContato=contact_id)
-        else:
-            uri = self._get_uri('contato',method='POST')
-        if "xml" not in kwargs:
-            xml = self.render_xml_contact(**kwargs)
-        else:
-            xml = kwargs['xml']
-        payload = {
-            'xml': xml,
-        }
-        resp = self._make_request('POST', uri, data=payload)
         return resp
 
     def getProduct(self, sku=None, creation_date=None, modification_date=None, creation_store_date=None, 
@@ -181,6 +253,27 @@ class BlingApi(object):
         params = self._construct_params(filters)
         
         resp = self._make_request('GET', uri, params=params)
+        return resp
+
+    def postContact(self, contact_id=None, **kwargs):
+        """
+        Função que Insere um contato ou altera um contato.
+        :param contact_id: Identificador do contato (opcional).
+        :param kwargs: Dict com informações para gerar o xml (obrigatório).
+        Caso contact_id seja passado será realizado uma alteração, caso seja None o contato será criado.
+        """
+        if bool(contact_id):
+            uri = self._get_uri('contato').format(idContato=contact_id)
+        else:
+            uri = self._get_uri('contato',method='POST')
+        if "xml" not in kwargs:
+            xml = self.render_xml_contact(**kwargs)
+        else:
+            xml = kwargs['xml']
+        payload = {
+            'xml': xml,
+        }
+        resp = self._make_request('POST', uri, data=payload)
         return resp
 
     def postProduct(self, sku=None, **kwargs):
@@ -313,6 +406,10 @@ class BlingApi(object):
         return resp
         
     def _construct_params(self, filters):
+        """
+        Função construtora dos parametros, transforma a string filters e converte em lista.
+        :param filters: string com os parametros a serem convertidos;
+        """
         res = dict()
         if len(filters) > 0:
             filters_value = ';'.join(filters)
@@ -322,85 +419,190 @@ class BlingApi(object):
         return res
         
     def _render(self, resource, **kwargs):
+        """
+        Busca o arquivo de template, juntamente com o dicionário de dados e envia a rotina de renderização. 
+        :param resource: Nome do recurso a ser renderizado;
+        :param kwargs: Dicionário contendo os dados para a renderização.
+        """
         path = os.path.join(os.path.dirname(__file__), 'templates')
         xmlElem_send = render_xml(path, '%s.xml' % resource, True, **kwargs)
         xml_send = '<?xml version="1.0" encoding="UTF-8"?>'+etree.tostring(xmlElem_send, encoding=str)
         return xml_send
 
     def _get_uri(self, resource):
-        return localizar_uri(resource)
+        """
+        Obtem a URI de GET para o envio do resource.
+        :param resource: Nome no recurso para retorno da url.
+        """
+        return localizar_uri(resource, METHOD_GET)
 
     def _post_uri(self, resource):
-        return localizar_uri(resource,method='POST')
+        """
+        Obtem a URI de POST para o envio do resource.
+        :param resource: Nome no recurso para retorno da url.
+        """
+        return localizar_uri(resource,METHOD_POST)
+
+    def _put_uri(self, resource):
+        """
+        Obtem a URI de POST para o envio do resource.
+        :param resource: Nome no recurso para retorno da url.
+        """
+        return localizar_uri(resource,METHOD_PUT)
+
+    def _delete_uri(self, resource):
+        """
+        Obtem a URI de POST para o envio do resource.
+        :param resource: Nome no recurso para retorno da url.
+        """
+        return localizar_uri(resource,METHOD_DELETE)
 
     def _make_request(self, method, uri, params=None, data=None):
+        """
+        Eniva a requisição wsdl na URI com o methodo passando o parametros e dados.
+        :param method: Método de chamada a URI [GET,POST,PUT]
+        :param uri: a URI da chamada;
+        :param params: Lista de parametros a ser enviada junto ao metodo.
+        :param: data: Dados passados na requisição.
+        """
         logger.info('method = {}'.format(method))
         logger.info('uri = {}'.format(uri))
         logger.info('params = {}'.format(params))
         logger.info('data = {}'.format(data))
         url = '{}/{}?apikey={}'.format(uri, self.file_format, self.api_key)
         logger.info('url = {}'.format(url))
-        try:
-            resp = self.session.request(method, url, data=data, params=params)
-            logger.debug(resp)
-            resp.raise_for_status()
-            if self.file_format == 'json':
-                return resp.json()
-            else:
-                return resp.content
-        except requests.exceptions.HTTPError as e:
-            raise BlingApiRequestError(e.request, e.response)
-        except requests.exceptions.RequestException as e:
-            raise BlingApiRequestError(e.request)
+        if  method in ['PUT','GET','POST','DELETE']:
+            try:
+                resp = self.session.request(method, url, data=data, params=params)
+                logger.debug(resp)
+                resp.raise_for_status()
+                if self.file_format == 'json':
+                    return resp.json()
+                else:
+                    return resp.content
+            except requests.exceptions.HTTPError as e:
+                raise BlingApiRequestError(e.request, e.response)
+            except requests.exceptions.RequestException as e:
+                raise BlingApiRequestError(e.request)
+        else:
+            raise BlingApiMethodError(method)
 
     def render_xml_category(self, **kwargs):
+        """
+        Renderiza o xml da categoria.
+        :param kwargs: Dicionário contendo os dados da renderização.
+        """
         return self._render('categoria', **kwargs)
 
     def render_xml_store_category(self, **kwargs):
+        """
+        Renderiza o xml da categoria.
+        :param kwargs: Dicionário contendo os dados da renderização.
+        """
         return self._render('categoriaLoja', **kwargs)
     
     def render_xml_bill_to_pay(self, **kwargs):
+        """
+        Renderiza o xml da Contas a Pagar.
+        :param kwargs: Dicionário contendo os dados da renderização.
+        """
         return self._render('contapagar', **kwargs)
     
     def render_xml_bill_to_receive(self, **kwargs):
+        """
+        Renderiza o xml da Contas a Receber.
+        :param kwargs: Dicionário contendo os dados da renderização.
+        """
         return self._render('contareceber', **kwargs)
     
     def render_xml_contact(self, **kwargs):
+        """
+        Renderiza o xml do Contato.
+        :param kwargs: Dicionário contendo os dados da renderização.
+        """
         return self._render('contato', **kwargs)
     
     def render_xml_contract(self, **kwargs):
+        """
+        Renderiza o xml do Contrato.
+        :param kwargs: Dicionário contendo os dados da renderização.
+        """
         return self._render('contrato', **kwargs)
     
     def render_xml_warehouse(self, **kwargs):
+        """
+        Renderiza o xml do depósito.
+        :param kwargs: Dicionário contendo os dados da renderização.
+        """
         return self._render('deposito', **kwargs)
     
     def render_xml_payment_methods(self, **kwargs):
+        """
+        Renderiza o xml do Forma de Pagamento.
+        :param kwargs: Dicionário contendo os dados da renderização.
+        """
         return self._render('formapagamento', **kwargs)
     
     def render_xml_logistics(self, **kwargs):
+        """
+        Renderiza o xml da logistica.
+        :param kwargs: Dicionário contendo os dados da renderização.
+        """
         return self._render('logistica', **kwargs)
     
     def render_xml_consumer_invoice(self, **kwargs):
+        """
+        Renderiza o xml da Fatura de Venda.
+        :param kwargs: Dicionário contendo os dados da renderização.
+        """
         return self._render('nfce', **kwargs)
     
     def render_xml_invoice(self, **kwargs):
+        """
+        Renderiza o xml da NFe.
+        :param kwargs: Dicionário contendo os dados da renderização.
+        """
         return self._render('nfe', **kwargs)
     
     def render_xml_service_invoice(self, **kwargs):
+        """
+        Renderiza o xml da NFSe.
+        :param kwargs: Dicionário contendo os dados da renderização.
+        """
         return self._render('nfse', **kwargs)
     
     def render_xml_production_order(self, **kwargs):
+        """
+        Renderiza o xml da Ordem de Produção.
+        :param kwargs: Dicionário contendo os dados da renderização.
+        """
         return self._render('ordemproducao', **kwargs)
     
     def render_xml_sale_order(self, **kwargs):
+        """
+        Renderiza o xml do Pedido de Venda.
+        :param kwargs: Dicionário contendo os dados da renderização.
+        """
         return self._render('pedido', **kwargs)
     
     def render_xml_product(self, **kwargs):
+        """
+        Renderiza o xml do Produto.
+        :param kwargs: Dicionário contendo os dados da renderização.
+        """
         return self._render('produto', **kwargs)
     
     def render_xml_event_tracking(self, **kwargs):
+        """
+        Renderiza o xml do Envento de Rastreamento.
+        :param kwargs: Dicionário contendo os dados da renderização.
+        """
         return self._render('rastreamentoevento', **kwargs)
     
     def render_xml_link_tracking(self, **kwargs):
+        """
+        Renderiza o xml do Vinculo de Rastreamento.
+        :param kwargs: Dicionário contendo os dados da renderização.
+        """
         return self._render('rastreamentovincular', **kwargs)
 

@@ -32,3 +32,24 @@ class BlingApiTypeContactError(Exception):
         
     def __str__(self):
         return self.message
+
+class BlingStateError(Exception):
+    def __init__(self, state):
+        self.message = "A sistuação %s não existe." % str(state)
+        
+    def __str__(self):
+        return self.message
+
+class BlingApiMethodError(Exception):
+    def __init__(self,Method):
+        self.message = "O método %s é desconhecido ou inexistente. Utilize os seguintes métodos [GET,POST,PUT,DELETE]" % str(Method)
+        
+    def __str__(self):
+        return self.message
+
+class BlingApiResourceMethodError(Exception):
+    def __init__(self,Resource,Method):
+        self.message = "O recurso %, método %s, não possuí URL específica. Favor consulte o manual do Bling" % (str(Resource),str(Method))
+        
+    def __str__(self):
+        return self.message

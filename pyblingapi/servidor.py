@@ -9,18 +9,34 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).      #
 #*************************************************************************#
 
-from pyblingapi import tools
+# from pyblingapi import tools
+from pyblingapi.errors import BlingApiResourceMethodError
+
+METHOD_POST = 'POST'
+METHOD_GET = 'GET'
+METHOD_PUT = 'PUT'
+METHOD_DELETE = 'DELETE'
 
 BLING_CATEGORIAS = 'categorias'
 BLING_CATEGORIA = 'categoria'
+BLING_CATEGORIA_ID = 'categoria_id'
 BLING_CATEGORIAS_LOJA = 'categoriasLoja'
 BLING_CATEGORIAS_LOJA_CATEG = 'categoriasLojaCateg'
 BLING_CONTA_PAGAR = 'contapagar'
+BLING_CONTA_PAGAR_ID = 'contapagar_id'
 BLING_CONTA_RECEBER = 'contareceber'
+BLING_CONTA_RECEBER_ID = 'contareceber_id'
 BLING_CONTATOS = 'contatos'
 BLING_CONTATO = 'contato'
+BLING_CONTATO_CPF_CNPJ = 'contato_cpf_cnpj'
 BLING_CONTRATO = 'contrato'
+BLING_CONTRATO_ID = 'contrato_id'
+BLING_CTE = 'cte'
+BLING_CTE_NUMBER_SERIE = 'cte_number_serie'
+BLING_CTE_LANCAMENTO_CONTAS = 'cte_lancamento_contas'
 BLING_DEPOSITO = 'deposito'
+BLING_DEPOSITO_ID = 'deposito_id'
+
 BLING_FORMA_PAGAMENTO = 'formapagamento'
 BLING_LOGISTICA = 'logistica'
 BLING_NOTAFISCAL = 'notafiscal'
@@ -39,39 +55,78 @@ BLING_VINCULAR_RASTREAMENTO = 'rastreamentovincular'
 
 URI = {
     'servidor': 'bling.com.br',
-    BLING_CATEGORIAS: 'Api/v2/categorias',
-    BLING_CATEGORIA: 'Api/v2/categoria/{idCategoria}',
-    BLING_CATEGORIAS_LOJA: 'Api/v2/categoriasLoja/{idLoja}',
-    BLING_CATEGORIAS_LOJA_CATEG: 'Api/v2/categoriasLoja/{idLoja}/{idCategoria}',
-    BLING_CONTA_PAGAR: False,
-    BLING_CONTA_RECEBER: False,
-    BLING_CONTATOS: 'Api/v2/contatos',
-    BLING_CONTATO: 'Api/v2/contato/{idContato}',
-    BLING_CONTRATO: False,
-    BLING_DEPOSITO: False,
-    BLING_FORMA_PAGAMENTO: False,
-    BLING_LOGISTICA: False,
-    BLING_NOTAFISCAL: 'Api/v2/notafiscal/{numero}/{serie}',
-    BLING_NOTASFISCAIS: 'Api/v2/notasfiscais',
-    BLING_NFCE: False,
-    BLING_NFSE: False,
-    BLING_ORDEM_PRODUCAO: False,
-    BLING_PEDIDO: 'Api/v2/pedido/{numero}',
-    BLING_PEDIDOS: 'Api/v2/pedidos',
-    BLING_PRODUTO: 'Api/v2/produto/{codigo}',
-    BLING_PRODUTOS: 'Api/v2/produtos',
-    BLING_PRODUTOS_FORNECEDOR: 'Api/v2/produto/{codigo}/{id_fornecedor}',
-    BLING_SITUACAO: 'Api/v2/situacao/{modulo}',
-    BLING_EVENTO_RASTREAMENTO: '',
-    BLING_VINCULAR_RASTREAMENTO: '',
+    
+    METHOD_GET: {
+        BLING_CATEGORIA: 'Api/v2/categorias',
+        BLING_CATEGORIA_ID: 'Api/v2/categoria/{idCategoria}',
+        BLING_CATEGORIAS_LOJA: 'Api/v2/categoriasLoja/{idLoja}',
+        BLING_CATEGORIAS_LOJA_CATEG: 'Api/v2/categoriasLoja/{idLoja}/{idCategoria}',
+        BLING_CONTATO: 'Api/v2/contatos',
+        BLING_CONTATO_CPF_CNPJ: 'Api/v2/contato/{cpf_cnpj}',
+        BLING_CONTA_PAGAR: 'Api/v2/contaspagar',
+        BLING_CONTA_PAGAR_ID: 'Api/v2/contaspagar/{idContaPagar}',
+        BLING_CONTA_RECEBER: 'Api/v2/contasreceber',
+        BLING_CONTA_RECEBER_ID: 'Api/v2/contareceber/{id}',
+        BLING_CONTRATO: 'Api/v2/contratos',
+        BLING_CONTRATO_ID: 'Api/v2/contrato/{id}',
+        BLING_CTE: 'Api/v2/ctes',
+        BLING_CTE_NUMBER_SERIE: 'Api/v2/cte/{numero}/{serie}',
+        BLING_DEPOSITO: 'Api/v2/depositos',
+        BLING_DEPOSITO_ID: 'Api/v2/deposito/{id}',
+    },
+    METHOD_POST: {
+        BLING_CATEGORIA: 'Api/v2/categoria',
+        BLING_CATEGORIAS_LOJA: 'Api/v2/categoriasLoja/{idLoja}',
+        BLING_CONTATO: 'Api/v2/contato',
+        BLING_CONTA_PAGAR: 'Api/v2/contapagar',
+        BLING_CONTA_RECEBER: 'Api/v2/contareceber',
+        BLING_CONTRATO: 'Api/v2/contratos',
+        BLING_CTE: 'Api/v2/cte',
+        BLING_CTE_LANCAMENTO_CONTAS: 'Api/v2/cte/lancamento/contas/{id}',
+        BLING_DEPOSITO: 'Api/v2/deposito',
+    },
+    METHOD_PUT: {
+        BLING_CATEGORIA: 'Api/v2/categoria/{idCategoria}',
+        BLING_CATEGORIAS_LOJA: 'Api/v2/categoriasLoja/{idLoja}/{idCategoria}',
+        BLING_CONTATO: 'Api/v2/contato/{idContato}',
+        BLING_CONTA_PAGAR: 'Api/v2/contapagar/{id}',
+        BLING_CONTA_RECEBER: 'Api/v2/contareceber/{id}',
+        BLING_CONTRATO: 'Api/v2/contrato/{id}',
+        BLING_CTE: '/Api/v2/cte/{id}',
+        BLING_DEPOSITO: 'Api/v2/deposito/{id}',
+    },
+    METHOD_DELETE: {
+        BLING_CONTRATO: 'Api/v2/contrato/{id}',
+        BLING_CTE: 'Api/v2/cte/estorno/contas/{id}',
+    },
+    
+    # BLING_FORMA_PAGAMENTO: False,
+    # BLING_LOGISTICA: False,
+    # BLING_NOTAFISCAL: 'Api/v2/notafiscal/{numero}/{serie}',
+    # BLING_NOTASFISCAIS: 'Api/v2/notasfiscais',
+    # BLING_NFCE: False,
+    # BLING_NFSE: False,
+    # BLING_ORDEM_PRODUCAO: False,
+    # BLING_PEDIDO: 'Api/v2/pedido/{numero}',
+    # BLING_PEDIDOS: 'Api/v2/pedidos',
+    # BLING_PRODUTO: 'Api/v2/produto/{codigo}',
+    # BLING_PRODUTOS: 'Api/v2/produtos',
+    # BLING_PRODUTOS_FORNECEDOR: 'Api/v2/produto/{codigo}/{id_fornecedor}',
+    # BLING_SITUACAO: 'Api/v2/situacao/{modulo}',
+    # BLING_EVENTO_RASTREAMENTO: '',
+    # BLING_VINCULAR_RASTREAMENTO: '',
 }
 
 
 def localizar_uri(resource, method='GET'):
     dominio = URI['servidor']
-    complemento = URI[resource]
-    if method == 'POST':
-        x = tools.find_nth(complemento, '/', 3)
-        # x = (x-1) * (-1) if x > 1 else 0 
-        complemento = complemento[:x]
+    try:
+        complemento = URI[method][resource]
+    except:
+        raise BlingApiResourceMethodError(resource,method)
+    
+    # if method == 'POST':
+    #     x = tools.find_nth(complemento, '/', 3)
+    #     # x = (x-1) * (-1) if x > 1 else 0 
+    #     complemento = complemento[:x]
     return "https://%s/%s" % (dominio, complemento)
