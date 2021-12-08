@@ -276,7 +276,29 @@ class BlingApi(object):
         resp = self._make_request('GET', uri)
         return resp
 
-    def getOrder(self, number=None, issued_date=None, change_date=None, expected_date=None, situation_id=None, contact_id=None):
+    def getProductSupplier(self, product_id=None, contact_id=None):
+        """
+        Função que busca um produto do Fornecedor.
+        :param product_id: Código SKU do produto (obrigatorio);
+        :param contact_id: Identificador do fornecedor (opcional)
+        """
+        filters = []
+        if bool(product_id) and not bool(contact_id):
+            uri = self._get_uri('produtofornecedor').format(codigo=product_id)
+        else:
+            uri = self._get_uri('produtosfornecedores')
+
+            if product_id:
+                filters.append('idProduto[{}]'.format(product_id))
+
+            if contact_id:
+                filters.append('idContato[{}]'.format(contact_id))
+
+        params = self._construct_params(filters)
+        resp = self._make_request('GET', uri)
+        return resp
+
+    def getSaleOrder(self, number=None, issued_date=None, change_date=None, expected_date=None, situation_id=None, contact_id=None):
         """
         Função que busca um Pedido de Venda ou uma lista de Pedidos de Venda.
         :param number: Número do Pedido (opcional);
@@ -317,6 +339,32 @@ class BlingApi(object):
 
             if contact_id:
                 filters.append('idContato[{}]'.format(contact_id))
+
+        params = self._construct_params(filters)
+        resp = self._make_request('GET', uri, params=params)
+        return resp
+
+    def getPurchaseOrder(self, number=None, issued_date=None, situation_id=None):
+        """
+        Função que busca um Pedido de Compra ou uma lista de Pedidos de Compra.
+        :param number: Número do Pedido (opcional);
+        :param issued_date: periodo de ['dd/mm/aaaa','dd/mm/aaaa'] (opcional)
+        :param situation_id: in ['P','S'] P-Produto S-Serviço (opcional)
+        """
+        filters = []
+        if bool(number):
+            uri = self._get_uri('pedidocompra').format(numero=number)
+        else:
+            uri = self._get_uri('pedidoscompra')
+
+            if issued_date:
+                if checkData(SELECTDATEDATATYPE, issued_date):
+                    filters.append('dataEmissao[{} TO {}]'.format(issued_date[0], issued_date[1]))
+                else:
+                    raise BlingApiDateSelectError()
+
+            if situation_id:
+                filters.append('idSituacao[{}]'.format(situation_id))
 
         params = self._construct_params(filters)
         resp = self._make_request('GET', uri, params=params)
@@ -495,6 +543,59 @@ class BlingApi(object):
                     raise BlingApiDateSelectError()
             if situation_id:
                 filters.append('situacao[{}]'.format(situation_id))
+
+        params = self._construct_params(filters)
+        resp = self._make_request('GET', uri, params=params)
+        return resp
+
+    def getProductionOrder(self,number=None,page=None):
+        """
+        Função que busca todas as Ordens de Produção.
+        :param page: Número da página de retorno (de 100 em 100 ordens);
+        """
+        if bool(number):
+            uri = self._get_uri('ordemproducao').format(numero=number)
+        else:
+            uri = self._get_uri('ordensproducao').format(page=page)
+
+        resp = self._make_request('GET', uri)
+        return resp
+
+    def getProductStore(self, sku):
+        """
+        Função que retorna a loja vinculada ao produto.
+        :param sku: Código do Produto (SKU);
+        """
+        uri = self._get_uri('produtoloja').format(numero=sku)
+
+        resp = self._make_request('GET', uri)
+        return resp
+
+    def getCommercialProposal(self, number=None, issued_date=None, situation_id=None, contact_id=None):
+        """
+        Função que busca uma Proposta Comercial ou uma lista de Propostas Comerciais.
+        :param number: Número da Proposta Comercial (opcional);
+        :param issued_date: periodo de ['dd/mm/aaaa','dd/mm/aaaa'] (opcional)
+        :param situation_id: in ['P','S'] P-Produto S-Serviço (opcional)
+        :param contact_id: in ['A','I'] A-Ativo I-Inativo (opcional)
+        """
+        filters = []
+        if bool(number):
+            uri = self._get_uri('propostacomercial').format(numero=number)
+        else:
+            uri = self._get_uri('propostascomerciais')
+
+            if issued_date:
+                if checkData(SELECTDATEDATATYPE, issued_date):
+                    filters.append('data[{} TO {}]'.format(issued_date[0], issued_date[1]))
+                else:
+                    raise BlingApiDateSelectError()
+
+            if situation_id:
+                filters.append('situacao[{}]'.format(situation_id))
+
+            if contact_id:
+                filters.append('idContato[{}]'.format(contact_id))
 
         params = self._construct_params(filters)
         resp = self._make_request('GET', uri, params=params)

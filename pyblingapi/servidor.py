@@ -48,15 +48,23 @@ BLING_NFCE_NUMBER_SERIE = 'nfce_number_serie'
 BLING_NFE = 'nfe'
 BLING_NFE_NUMBER_SERIE = 'nfe_number_serie'
 BLING_NFSE = 'nfse'
-BLING_NFSE_NUMBER = 'nfse_number_serie'
-
+BLING_NFSE_NUMBER = 'nfse_number'
+BLING_ORDENS_PRODUCAO = 'ordensproducao'
 BLING_ORDEM_PRODUCAO = 'ordemproducao'
 BLING_PEDIDO = 'pedido'
 BLING_PEDIDOS = 'pedidos'
-BLING_SITUACAO = 'situacao'
+BLING_PEDIDO_COMPRA = 'pedidocompra'
+BLING_PEDIDOS_COMPRA = 'pedidoscompra'
 BLING_PRODUTO = 'produto'
 BLING_PRODUTOS = 'produtos'
 BLING_PRODUTOS_FORNECEDOR = 'produtosfornecedor'
+BLING_PRODUTO_LOJA = 'produtoloja'
+BLING_FORNECEDOR_PRODUTOS = 'produtosfornecedores'
+BLING_FORNECEDOR_PRODUTO = 'produtofornecedor'
+BLING_PROPOSTA_COMERCIAL = 'propostacomercial'
+BLING_PROPOSTAS_COMERCIAIS = 'propostascomerciais'
+
+BLING_SITUACAO = 'situacao'
 BLING_EVENTO_RASTREAMENTO = 'rastreamentoevento'
 BLING_VINCULAR_RASTREAMENTO = 'rastreamentovincular'
 
@@ -93,6 +101,18 @@ URI = {
         BLING_NFE_NUMBER_SERIE: 'Api/v2/notafiscal/{numero}/{serie}',
         BLING_NFSE: 'Api/v2/notasservico',
         BLING_NFSE_NUMBER: 'Api/v2/notaservico/{numero}',
+        BLING_ORDEM_PRODUCAO: 'Api/v2/ordensproducao/page={page}',
+        BLING_ORDEM_PRODUCAO: 'Api/v2/ordemproducao/{numero}',
+        BLING_PEDIDO: 'Api/v2/pedido/{numero}',
+        BLING_PEDIDOS: 'Api/v2/pedidos',
+        BLING_PEDIDO_COMPRA: 'v2/pedidocompra/{numero}',
+        BLING_PEDIDOS_COMPRA: 'Api/v2/pedidoscompra',
+        BLING_PRODUTO: 'Api/v2/produto/{codigo}',
+        BLING_PRODUTOS: 'Api/v2/produtos',
+        BLING_PRODUTOS_FORNECEDOR: 'Api/v2/produto/{codigo}/{id_fornecedor}',
+        BLING_PRODUTO_LOJA: 'Api/v2/produto/{codigo}',
+        BLING_FORNECEDOR_PRODUTOS: 'Api/v2/produtosfornecedores',
+        BLING_FORNECEDOR_PRODUTO: 'Api/v2/produtofornecedor/{id}',
     },
     METHOD_POST: {
         BLING_CATEGORIA: 'Api/v2/categoria',
@@ -127,11 +147,6 @@ URI = {
     # BLING_NFCE: False,
     # BLING_NFSE: False,
     # BLING_ORDEM_PRODUCAO: False,
-    # BLING_PEDIDO: 'Api/v2/pedido/{numero}',
-    # BLING_PEDIDOS: 'Api/v2/pedidos',
-    # BLING_PRODUTO: 'Api/v2/produto/{codigo}',
-    # BLING_PRODUTOS: 'Api/v2/produtos',
-    # BLING_PRODUTOS_FORNECEDOR: 'Api/v2/produto/{codigo}/{id_fornecedor}',
     # BLING_SITUACAO: 'Api/v2/situacao/{modulo}',
     # BLING_EVENTO_RASTREAMENTO: '',
     # BLING_VINCULAR_RASTREAMENTO: '',
