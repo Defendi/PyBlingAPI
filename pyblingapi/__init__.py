@@ -29,6 +29,17 @@ class BlingApi(object):
         self.session = requests.Session()
         self.file_format = str(file_format).lower()
 
+    # Métodos GET
+    def getCamposCustomizados(self, module):
+        """
+        Função que Busca os campos customizados a partir do seu módulo.
+        :param module: Módulo dos campos customizados que você deseja consultar (obrigatório). 
+                       Utilizar o nome exibido na tabela de módulos.
+        """
+        uri = self._get_uri('camposcustomizados').format(modulo=module)
+        resp = self._make_request('GET', uri)
+        return resp
+
     def getSituation(self, module):
         """
         Função que Busca as situações a partir do seu módulo.
@@ -255,6 +266,240 @@ class BlingApi(object):
         resp = self._make_request('GET', uri, params=params)
         return resp
 
+    def getProductBySupplier(self, sku, supplier_id):
+        """
+        Função que busca um produto pelo Fornecedor.
+        :param sku: Código SKU do produto (obrigatorio);
+        :param supplier_id: Identificador do fornecedor (obrigatorio)
+        """
+        uri = self._get_uri('produtosfornecedor').format(codigo=sku,id_fornecedor=supplier_id)
+        resp = self._make_request('GET', uri)
+        return resp
+
+    def getOrder(self, number=None, issued_date=None, change_date=None, expected_date=None, situation_id=None, contact_id=None):
+        """
+        Função que busca um Pedido de Venda ou uma lista de Pedidos de Venda.
+        :param number: Número do Pedido (opcional);
+        :param issued_date: periodo de ['dd/mm/aaaa','dd/mm/aaaa'] (opcional)
+        :param change_date: periodo de ['dd/mm/aaaa','dd/mm/aaaa'] (opcional)
+        :param expected_date: periodo de ['dd/mm/aaaa','dd/mm/aaaa'] (opcional)
+        :param situation_id: in ['P','S'] P-Produto S-Serviço (opcional)
+        :param contact_id: in ['A','I'] A-Ativo I-Inativo (opcional)
+        
+        Caso número seja passado é obrigatório a série e os outros valores serão ignorados.
+        """
+        filters = []
+        if bool(number):
+            uri = self._get_uri('pedido').format(numero=number)
+        else:
+            uri = self._get_uri('pedidos')
+
+            if issued_date:
+                if checkData(SELECTDATEDATATYPE, issued_date):
+                    filters.append('dataEmissao[{} TO {}]'.format(issued_date[0], issued_date[1]))
+                else:
+                    raise BlingApiDateSelectError()
+
+            if change_date:
+                if checkData(SELECTDATEDATATYPE, change_date):
+                    filters.append('dataAlteracao[{} TO {}]'.format(change_date[0], change_date[1]))
+                else:
+                    raise BlingApiDateSelectError()
+
+            if expected_date:
+                if checkData(SELECTDATEDATATYPE, expected_date):
+                    filters.append('dataPrevista[{} TO {}]'.format(expected_date[0], expected_date[1]))
+                else:
+                    raise BlingApiDateSelectError()
+
+            if situation_id:
+                filters.append('idSituacao[{}]'.format(situation_id))
+
+            if contact_id:
+                filters.append('idContato[{}]'.format(contact_id))
+
+        params = self._construct_params(filters)
+        resp = self._make_request('GET', uri, params=params)
+        return resp
+
+    def getWarehouses(self, warehouse_id=None):
+        """
+        Função que busca um determinado depósito ou todos os depósitos.
+        :param warehouse_id: Identificador do depósito (opcional);
+        """
+        if bool(warehouse_id):
+            uri = self._get_uri('deposito_id').format(id=warehouse_id)
+        else:
+            uri = self._get_uri('deposito')
+
+        resp = self._make_request('GET', uri)
+        return resp
+
+    def getPaymentMethods(self, payment_method_id=None, description=None, fiscal_code=None, situation_id=None):
+        """
+        Função que busca um determinado depósito ou todos os depósitos.
+        :param payment_method_id: Identificador do Método de Pagamento, inteiro (opcional);
+        :param description: Descrição parcial do Método de Pagamento, texto (opcional);
+        :param fiscal_code: Código Fiscal do Método de Pagamento, inteiro (opcional);
+        :param situation_id: Situação  do Método de Pagamento, inteiro (opcional);
+        """
+        filters = []
+        if bool(payment_method_id):
+            uri = self._get_uri('formapagamento_id').format(id=payment_method_id)
+        else:
+            uri = self._get_uri('deposito')
+
+        if description:
+            filters.append('descricao[{}]'.format(description))
+
+        if fiscal_code:
+            filters.append('codigoFiscal[{}]'.format(fiscal_code))
+
+        if situation_id:
+            filters.append('situacao[{}]'.format(situation_id))
+
+        params = self._construct_params(filters)
+        resp = self._make_request('GET', uri, params=params)
+        return resp
+
+    def getProductGroup(self, product_group_id=None):
+        """
+        Função que busca um determinado Grupo de Produtos ou todos os Grupos de Produtos.
+        :param product_group_id: Identificador do Grupo de Produtos, inteiro (opcional);
+        """
+        if bool(product_group_id):
+            uri = self._get_uri('grupoprodutos_id').format(id=product_group_id)
+        else:
+            uri = self._get_uri('grupoprodutos')
+
+        resp = self._make_request('GET', uri)
+        return resp
+
+    def getLogisticServices(self, logistic_id=None):
+        """
+        Função que busca todos os serviços da logistica.
+        :param logistic_id: Identificador da logistica, inteiro (opcional);
+        """
+        if bool(logistic_id):
+            uri = self._get_uri('logistica_id_servico').format(id=logistic_id)
+        else:
+            uri = self._get_uri('logisticaservicos')
+
+        resp = self._make_request('GET', uri)
+        return resp
+
+    def getCTes(self, number=None, serie=None, issued_date=None):
+        """
+        Função que busca um Pedido de Venda ou uma lista de Pedidos de Venda.
+        :param number: Número da CTe (opcional);
+        :param serie: Série da CTe (opcional/obrigatorio)
+        :param issued_date: periodo de ['dd/mm/aaaa','dd/mm/aaaa'] (opcional)
+        
+        Caso número seja passado é obrigatório a série e os outros valores serão ignorados.
+        """
+        filters = []
+        if bool(number) and bool(serie):
+            uri = self._get_uri('cte_number_serie').format(numero=number,serie=serie)
+        else:
+            uri = self._get_uri('cte')
+
+            if issued_date:
+                if checkData(SELECTDATEDATATYPE, issued_date):
+                    filters.append('dataEmissao[{} TO {}]'.format(issued_date[0], issued_date[1]))
+                else:
+                    raise BlingApiDateSelectError()
+
+        params = self._construct_params(filters)
+        resp = self._make_request('GET', uri, params=params)
+        return resp
+
+    def getNFe(self, number=None, serie=None, issued_date=None, situation=None, type=None):
+        """
+        Função que busca uma Nota Fiscal ou uma lista de Notas Fiscais.
+        :param number: Número da Nota (opcional);
+        :param serie: Série da Nota (opcional/obrigatorio)
+        :param issued_date: periodo de ['dd/mm/aaaa','dd/mm/aaaa'] (opcional)
+        :param situation: in ['P','S'] P-Produto S-Serviço (opcional)
+        :param type: in ['A','I'] A-Ativo I-Inativo (opcional)
+        
+        Caso número seja passado é obrigatório a série e os outros valores serão ignorados.
+        """
+        filters = []
+        if bool(number) and bool(serie):
+            uri = self._get_uri('nfe_number_serie').format(numero=number,serie=serie)
+        else:
+            uri = self._get_uri('nfe')
+
+            if issued_date:
+                if checkData(SELECTDATEDATATYPE, issued_date):
+                    filters.append('dataEmissao[{} TO {}]'.format(issued_date[0], issued_date[1]))
+                else:
+                    raise BlingApiDateSelectError()
+
+            if situation:
+                filters.append('situacao[{}]'.format(situation))
+
+            if type:
+                filters.append('tipo[{}]'.format(type))
+
+        params = self._construct_params(filters)
+        resp = self._make_request('GET', uri, params=params)
+        return resp
+
+    def getNFCes(self, number=None, serie=None, issued_date=None, situation_id=None):
+        """
+        Função que busca todas as NFC-es emitidas ou uma determinada NFC-e.
+        :param number: Número da NFC-e (opcional);
+        :param serie: Série da NFC-e (opcional/obrigatorio)
+        :param issued_date: periodo de ['dd/mm/aaaa','dd/mm/aaaa'] (opcional)
+        :param situation_id: Situação conforme tabela (opcional)
+        
+        Caso número seja passado é obrigatório a série e os outros valores serão ignorados.
+        """
+        filters = []
+        if bool(number) and bool(serie):
+            uri = self._get_uri('nfce_number_serie').format(numero=number,serie=serie)
+        else:
+            uri = self._get_uri('nfce')
+
+            if issued_date:
+                if checkData(SELECTDATEDATATYPE, issued_date):
+                    filters.append('dataEmissao[{} TO {}]'.format(issued_date[0], issued_date[1]))
+                else:
+                    raise BlingApiDateSelectError()
+            if situation_id:
+                filters.append('situacao[{}]'.format(situation_id))
+
+        params = self._construct_params(filters)
+        resp = self._make_request('GET', uri, params=params)
+        return resp
+
+    def getNFSes(self, number=None, issued_date=None, situation_id=None):
+        """
+        Função que busca todas as NFS-es emitidas ou uma determinada NFS-e.
+        :param number: Número da NFS-e (opcional);
+        :param serie: Série da NFS-e (opcional/obrigatorio)
+        :param issued_date: periodo de ['dd/mm/aaaa','dd/mm/aaaa'] (opcional)
+        :param situation_id: Situação conforme tabela (opcional)
+        """
+        filters = []
+        if bool(number):
+            uri = self._get_uri('nfse_number').format(numero=number)
+        else:
+            uri = self._get_uri('nfse')
+
+            if issued_date:
+                if checkData(SELECTDATEDATATYPE, issued_date):
+                    filters.append('dataEmissao[{} TO {}]'.format(issued_date[0], issued_date[1]))
+                else:
+                    raise BlingApiDateSelectError()
+            if situation_id:
+                filters.append('situacao[{}]'.format(situation_id))
+
+        params = self._construct_params(filters)
+        resp = self._make_request('GET', uri, params=params)
+        return resp
+
     def postContact(self, contact_id=None, **kwargs):
         """
         Função que Insere um contato ou altera um contato.
@@ -316,95 +561,6 @@ class BlingApi(object):
         
         return self.postProduct(**xml)
 
-    def getProductBySupplier(self, sku, supplier_id):
-        """
-        Função que busca um produto pelo Fornecedor.
-        :param sku: Código SKU do produto (obrigatorio);
-        :param supplier_id: Identificador do fornecedor (obrigatorio)
-        """
-        uri = self._get_uri('produtosfornecedor').format(codigo=sku,id_fornecedor=supplier_id)
-        resp = self._make_request('GET', uri)
-        return resp
-
-    def getInvoice(self, number=None, serie=None, issued_date=None, situation=None, type=None):
-        """
-        Função que busca uma Nota Fiscal ou uma lista de Notas Fiscais.
-        :param number: Número da Nota (opcional);
-        :param serie: Série da Nota (opcional/obrigatorio)
-        :param issued_date: periodo de ['dd/mm/aaaa','dd/mm/aaaa'] (opcional)
-        :param situation: in ['P','S'] P-Produto S-Serviço (opcional)
-        :param type: in ['A','I'] A-Ativo I-Inativo (opcional)
-        
-        Caso número seja passado é obrigatório a série e os outros valores serão ignorados.
-        """
-        filters = []
-        if bool(number) and bool(serie):
-            uri = self._get_uri('notafiscal').format(numero=number,serie=serie)
-        else:
-            uri = self._get_uri('notafiscais')
-
-            if issued_date:
-                if checkData(SELECTDATEDATATYPE, issued_date):
-                    filters.append('dataEmissao[{} TO {}]'.format(issued_date[0], issued_date[1]))
-                else:
-                    raise BlingApiDateSelectError()
-
-            if situation:
-                filters.append('situacao[{}]'.format(situation))
-
-            if type:
-                filters.append('tipo[{}]'.format(type))
-
-        params = self._construct_params(filters)
-        resp = self._make_request('GET', uri, params=params)
-        return resp
-
-    def getOrder(self, number=None, issued_date=None, change_date=None, expected_date=None, situation_id=None, contact_id=None):
-        """
-        Função que busca um Pedido de Venda ou uma lista de Pedidos de Venda.
-        :param number: Número do Pedido (opcional);
-        :param issued_date: periodo de ['dd/mm/aaaa','dd/mm/aaaa'] (opcional)
-        :param change_date: periodo de ['dd/mm/aaaa','dd/mm/aaaa'] (opcional)
-        :param expected_date: periodo de ['dd/mm/aaaa','dd/mm/aaaa'] (opcional)
-        :param situation_id: in ['P','S'] P-Produto S-Serviço (opcional)
-        :param contact_id: in ['A','I'] A-Ativo I-Inativo (opcional)
-        
-        Caso número seja passado é obrigatório a série e os outros valores serão ignorados.
-        """
-        filters = []
-        if bool(number):
-            uri = self._get_uri('pedido').format(numero=number)
-        else:
-            uri = self._get_uri('pedidos')
-
-            if issued_date:
-                if checkData(SELECTDATEDATATYPE, issued_date):
-                    filters.append('dataEmissao[{} TO {}]'.format(issued_date[0], issued_date[1]))
-                else:
-                    raise BlingApiDateSelectError()
-
-            if change_date:
-                if checkData(SELECTDATEDATATYPE, change_date):
-                    filters.append('dataAlteracao[{} TO {}]'.format(change_date[0], change_date[1]))
-                else:
-                    raise BlingApiDateSelectError()
-
-            if expected_date:
-                if checkData(SELECTDATEDATATYPE, expected_date):
-                    filters.append('dataPrevista[{} TO {}]'.format(expected_date[0], expected_date[1]))
-                else:
-                    raise BlingApiDateSelectError()
-
-            if situation_id:
-                filters.append('idSituacao[{}]'.format(situation_id))
-
-            if contact_id:
-                filters.append('idContato[{}]'.format(contact_id))
-
-        params = self._construct_params(filters)
-        resp = self._make_request('GET', uri, params=params)
-        return resp
-        
     def _construct_params(self, filters):
         """
         Função construtora dos parametros, transforma a string filters e converte em lista.

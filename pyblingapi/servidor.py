@@ -17,6 +17,7 @@ METHOD_GET = 'GET'
 METHOD_PUT = 'PUT'
 METHOD_DELETE = 'DELETE'
 
+BLING_CAMPOSCUSTOMIZADOS = 'camposcustomizados'
 BLING_CATEGORIAS = 'categorias'
 BLING_CATEGORIA = 'categoria'
 BLING_CATEGORIA_ID = 'categoria_id'
@@ -36,13 +37,19 @@ BLING_CTE_NUMBER_SERIE = 'cte_number_serie'
 BLING_CTE_LANCAMENTO_CONTAS = 'cte_lancamento_contas'
 BLING_DEPOSITO = 'deposito'
 BLING_DEPOSITO_ID = 'deposito_id'
-
 BLING_FORMA_PAGAMENTO = 'formapagamento'
-BLING_LOGISTICA = 'logistica'
-BLING_NOTAFISCAL = 'notafiscal'
-BLING_NOTASFISCAIS = 'notafiscais'
+BLING_FORMA_PAGAMENTO_ID = 'formapagamento_id'
+BLING_GRUPO_PRODUTOS = 'grupoprodutos'
+BLING_GRUPO_PRODUTOS_ID = 'grupoprodutos_id'
+BLING_LOGISTICA_SERVICO = 'logisticaservicos'
+BLING_LOGISTICA_ID_SERVICO = 'logistica_id_servico'
 BLING_NFCE = 'nfce'
+BLING_NFCE_NUMBER_SERIE = 'nfce_number_serie'
+BLING_NFE = 'nfe'
+BLING_NFE_NUMBER_SERIE = 'nfe_number_serie'
 BLING_NFSE = 'nfse'
+BLING_NFSE_NUMBER = 'nfse_number_serie'
+
 BLING_ORDEM_PRODUCAO = 'ordemproducao'
 BLING_PEDIDO = 'pedido'
 BLING_PEDIDOS = 'pedidos'
@@ -57,6 +64,7 @@ URI = {
     'servidor': 'bling.com.br',
     
     METHOD_GET: {
+        BLING_CAMPOSCUSTOMIZADOS: 'Api/v2/camposcustomizados/{modulo}',
         BLING_CATEGORIA: 'Api/v2/categorias',
         BLING_CATEGORIA_ID: 'Api/v2/categoria/{idCategoria}',
         BLING_CATEGORIAS_LOJA: 'Api/v2/categoriasLoja/{idLoja}',
@@ -73,6 +81,18 @@ URI = {
         BLING_CTE_NUMBER_SERIE: 'Api/v2/cte/{numero}/{serie}',
         BLING_DEPOSITO: 'Api/v2/depositos',
         BLING_DEPOSITO_ID: 'Api/v2/deposito/{id}',
+        BLING_FORMA_PAGAMENTO: 'Api/v2/formaspagamento',
+        BLING_FORMA_PAGAMENTO_ID: 'Api/v2/formapagamento/{id}',
+        BLING_GRUPO_PRODUTOS: 'Api/v2/gruposprodutos',
+        BLING_GRUPO_PRODUTOS_ID: 'Api/v2/grupoprodutos/{id}',
+        BLING_LOGISTICA_SERVICO: 'Api/v2/logisticas/servicos',
+        BLING_LOGISTICA_ID_SERVICO: 'Api/v2/logistica/{id}/servicos',
+        BLING_NFCE: 'Api/v2/nfces',
+        BLING_NFCE_NUMBER_SERIE: 'Api/v2/nfce/{numero}/{serie}',
+        BLING_NFE: 'Api/v2/notasfiscais',
+        BLING_NFE_NUMBER_SERIE: 'Api/v2/notafiscal/{numero}/{serie}',
+        BLING_NFSE: 'Api/v2/notasservico',
+        BLING_NFSE_NUMBER: 'Api/v2/notaservico/{numero}',
     },
     METHOD_POST: {
         BLING_CATEGORIA: 'Api/v2/categoria',

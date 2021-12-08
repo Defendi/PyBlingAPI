@@ -36,6 +36,12 @@ SEL_BILLS_STATE = [
     ('parcial',     'Isento'),
 ]
 
+MODULES_TABLE = [
+    ('Produtos','Produtos'),
+    ('OrdemServico','Ordem de Serviço'),
+    ('Contatos','Contatos'),
+]
+
 def StateInList(state,list):
     res = False
     for item in list:
